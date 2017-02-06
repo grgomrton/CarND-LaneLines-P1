@@ -6,18 +6,16 @@ This repository contains my solution for the Finding Lane Lines assignment in th
 - Clone this repository
 
 ### Executing the pipeline
-- Switch to _carnd-term1_ environment and start Jupyter
 
-  `$ source activate carnd-term1`
-  
-  `$ cd ~/CarND-LaneLines-P1`
-  
-  `$ jupyter notebook`
-  
-- In the opening browser choose P1.ipynb and click on Kernel/Restart & Run all
-- The pipeline should execute on the test images, the input videos and the challenge video
+- Switch to _carnd-term1_ environment and start Jupyter:  
+  `$ source activate carnd-term1`  
+  `$ cd ~/CarND-LaneLines-P1`  
+  `$ jupyter notebook`  
+- Navigate to `http://localhost:8888/`, open the _P1_ notebook and click on `Kernel / Restart & Run all`
+- The pipeline should execute on the test images, the input videos and on the challenge video
 
----
-Made for the Self-Driving Car NanoDegree at Udacity
+
+--
+Made for the Self-Driving Car NanoDegree Program at Udacity
 
 [![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive) 
