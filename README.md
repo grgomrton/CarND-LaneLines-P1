@@ -1,8 +1,6 @@
 # Finding Lane Lines on the Road - Assignment Entry
 
-This repository contains my solution for the Finding Lane Lines assignment of the Self-Driving Car Nanodegree program at Udacity. 
-
-![An example output][cover_image]
+This repository contains my solution for the Finding Lane Lines assignment of the Self-Driving Car Nanodegree program at Udacity.
 
 ### Building the environment
 - Download and install the [CarND Term1 Starter Kit](https://github.com/udacity/CarND-Term1-Starter-Kit)
@@ -17,38 +15,43 @@ This repository contains my solution for the Finding Lane Lines assignment of th
 - Navigate to `http://localhost:8888/`, open the _P1_ notebook and click on `Kernel / Restart & Run all`
 - The pipeline should execute on the test images, the input videos and on the challenge video
 
+![An example output][cover_image]
+_The result of the pipeline executing on an input image_
+
 ## Algorithm description
 
 The pipeline analyses a color input image and returns a color image with the identified lane lines drawn onto it.
 ### Process
 From the input image two edge image is created:  
-`edges_from_shape = greyscale > gauss-blur > canny`  
-`edges_from_color = select white pixels U select yellow pixels > gauss-blur > canny`  
+`edges_from_shape = greyscale -> gauss-blur -> canny`  
+`edges_from_color = select white pixels U select yellow pixels -> gauss-blur -> canny`  
 The final edge image is the combination of the two:  
 `edges = edges_from_shape U edges_from_color`  
 
 ![Process of finding edges][edges]
 _The edges from shape information, the edges from color segmentation and the final edge image_
 
-A Hough-line detection is performed on the final image. The output segments are categorized into left and right sets based on their angle:  
-`left_segments = segment in segments : -90° > segment.angle > -20°`  
+A Hough-line detection is performed on the final image. The output segments are categorized into left and right groups based on their angle:  
+`left_segments = segment in segments : -90° < segment.angle < -20°`  
 `right_segments = segment in segments : 90° > segment.angle > 20°`  
 
-The segments are converted to `XTheta` representations, which defines lines by their:
+The segments are then converted into `XTheta` representations, which defines lines by their:
 - X-intercept: the point where the line intersects with the x-axis
 - Theta: the signed angle between the line and the x-axis
 - Weight (optional): the weight associated with the line
 
-The left and the right lanes are the average of the lines in the respective sets. The lines are weighted by the length of their originating segments.  
+The left and the right lanes are the average lines of the lines in the respective sets. The lines are weighted by the length of their originating segments.  
 `left_lane_line = XTheta(avg_x_intercept, avg_angle) of left_lines`  
 `right_lane_line = XTheta(avg_x_intercept, avg_angle) of right_lines`  
 
-For still images the final lane line is this average line. 
+For still images the final lane is this average line. 
 
-![An image with the entire left lane line drawn][left_lane]
-_The entire left lane line drawn onto an input image_
+<img src="./documentation/full_left_lane_drawn.png" width="500" alt="An image with the entire left lane line" />
+_The entire left lane drawn onto an input image_
 
-For videos a queue of the identified lanes is used to improve the precision and reduce jitter in the result. For videos, the final lanes are:  
+For videos a fixed size queue is defined that contains the formerly identified lines. This queue is intended to improve precision and reduce jitter in the result. If the lane line cannot be identified on a frame of the video, the missing entry is filled with the average value from the queue. 
+
+For videos, the final lanes are:  
 `averaged_left_lane_line = XTheta(avg_x_intercept, avg_angle) of left_lane_lines in queue`  
 `averaged_right_lane_line = XTheta(avg_x_intercept, avg_angle) of right_lane_lines in queue`  
 
@@ -58,6 +61,23 @@ _The pipeline executing on an input video_
 ![Snapshots from the output video extra.mp4][challenge_snapshots]
 _The pipeline executing on the challenge video_
 
+## Reflection
+Below are the most important weaknesses of the pipeline with possible ways of enhancement.
+
+### Thresholding
+Probably this is the biggest weakness. The algorithms used in the pipeline requires plenty of thresholds, but right now these thresholds are sort of "trained" on the input datasets. It causes them to perform well on an input similar to the example inputs - e.g. daylight on a highway with little traffic -, but it is likely to fail under different conditions - e.g. at night in the city. 
+
+The most important thresholds to consider are the canny thresholds, and the color segmentation thresholds. 
+
+A possible way to improve their performance would be to use some histogram equalization algorithm. This might result in better performance - even with fixed thresholds - under varying conditions. Another possibility might be to define presets, and try to choose the best one based on some analysis of the current light and weather conditions.
+
+### Lane representation
+
+Right now the lanes are approximated as lines. This works fine until the lanes are close to a straight line, but this method will not work on a road with steep curves. The lanes should be either represented as chain of lines, or even better, as curves - for example with a point on the bottom of the image and a tangent vector. A variant of the Hough-transformation might be used to identify such curves.
+
+### Object detection
+
+Right now a good view of the road is expected, but under some conditions part of the lanes might be hidden by other cars. Also, painted signs on the road could appear, whose edges along with edges from cars will all be calculated into the lane localization. It is easy to imagine that a zebra crossing will cause the mislocalization of the lane. Cars, traffic signs and other objects should be removed from the camera image to improve stability and performance.
 
 --
 Made for the Self-Driving Car NanoDegree Program at Udacity
