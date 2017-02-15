@@ -1,6 +1,6 @@
 # Finding Lane Lines on the Road - Assignment Entry
 
-This repository contains my solution for the Finding Lane Lines assignment of the Self-Driving Car Nanodegree program at Udacity.
+This repository contains my solution for the Finding Lane Lines assignment.
 
 ![An example output][cover_image]
 
