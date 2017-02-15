@@ -42,14 +42,14 @@ These segments are converted into `XTheta` representations, which defines lines 
 - Theta: the signed angle between the line and the x-axis
 - Weight (optional): the weight associated with the line
 
-The left and the right lanes are the average lines of the lines in the respective sets. The lines are weighted by the length of their originating segments.  
+The left and the right lanes are the average of the lines in the respective sets. The lines are weighted by the length of their originating segments.  
 `left_lane_line = XTheta(avg_x_intercept, avg_angle) of left_lines`  
 `right_lane_line = XTheta(avg_x_intercept, avg_angle) of right_lines`  
 
 For still images the final lane is this average line:  
 
 <img src="./documentation/full_left_lane_drawn.png" width="500" alt="An image with the entire left lane line" />  
-_The entire left lane drawn onto an input image_
+_The entire left lane line drawn onto an input image_
 
 For videos a fixed size queue is defined that contains the formerly identified lines. This queue is intended to improve precision and reduce jitter in the result. If the lane line cannot be identified on a frame of the video, the missing entry is filled with the average value from the queue. 
 
